@@ -1,0 +1,55 @@
+body {
+  max-width: fit-content;
+  background-color: #354f52;
+  margin: 0 auto;
+  font: 26px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#header {
+  height: 200px;
+  background-color: #cad2c5;
+  line-height: 200px;
+  text-align: center;
+  font-size: 48px;
+}
+
+#votes {
+  padding: 1em;
+  background-color: #84a98c;
+  display: flex;
+  flex: auto;
+  min-height: 5em;
+}
+
+#selection {
+  background-color: #52796f;
+  display: flex;
+  flex: 0;
+  padding: 1em;
+  min-height: 5em;
+}
+
+#host {
+  background-color: #52796f;
+}
+
+.card {
+  height: 3em;
+  width: 2em;
+  background-color: #cad2c5;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 10px;
+  margin-right: 10px;
+  text-align: center;
+  line-height: 3em;
+  font-size: 1.5em;
+}
+
+#selection .card:hover {
+  background-color: blanchedalmond;
+}
