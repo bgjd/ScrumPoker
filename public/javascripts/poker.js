@@ -1,106 +1,113 @@
-var io = null;
-var users = [];
-var host = null;
-var revealed = false;
-
-function init(io_val) {
-    io = io_val;
+function PokerRoom(io, room_id) {
+    this.io = io;
+    this.users = [];
+    this.host = null;
+    this.revealed = false;
+    this.roomId = room_id;
 }
 
-function getUsers() {
-    if (revealed) {
-        return users;
+/* Get the list of user votes, if in revealed mode these will be the true votes, when not in revealed 
+ * mode the votes will be replaced with an 'X' */
+PokerRoom.prototype.getUsers = function () {
+    if (this.revealed) {
+        return this.users;
     }
 
-    hiddenUsers = Array(users.length);
-    for (var idx = 0; idx < users.length; idx++) {
-        const thisVal = users[idx].val ? 'X' : ' '
+    hiddenUsers = Array(this.users.length);
+    for (var idx = 0; idx < this.users.length; idx++) {
+        const thisVal = this.users[idx].val ? 'X' : ' '
         hiddenUsers[idx] = { val: thisVal };
     }
 
     return hiddenUsers
 }
 
-function emitUsers() {
-    io.emit('users', getUsers());
+PokerRoom.prototype.emitUsers = function () {
+    this.io.to(this.roomId).emit('users', this.getUsers());
 }
 
-function handleSelection(id, val) {
-    if (revealed) {
-        return;
-    }
-    updateOrAddSelection(id, val);
-    console.log(users);
-    emitUsers();
-}
-
-function handleReset(id) {
-    if (id != host) {
-        return;
-    }
-
-    for (var user of users) {
-        user.val = null;
-    }
-
-    revealed = false;
-
-    emitUsers();
-    io.emit('reset_selection');
-}
-
-function handleReveal(id) {
-    if (id != host) {
-        return;
-    }
-
-    revealed = true;
-    emitUsers();
-}
-
-function updateOrAddSelection(id, val) {
-    for (const user of users) {
+PokerRoom.prototype.updateOrAddSelection = function (id, val) {
+    for (const user of this.users) {
         if (user.id == id) {
             user.val = val;
             return;
         }
     }
-    users.push({ id, val });
+    this.users.push({ id, val });
 }
 
-function onConnection(socket) {
+/* Handle a user making a vote selection */
+PokerRoom.prototype.handleSelection = function (id, val) {
+    if (this.revealed) {
+        return;
+    }
+    this.updateOrAddSelection(id, val);
+    console.log(this.users);
+    this.emitUsers();
+}
+
+/* Handle resetting the votes */
+PokerRoom.prototype.handleReset = function (id) {
+    if (id != this.host) {
+        return;
+    }
+
+    for (var user of this.users) {
+        user.val = null;
+    }
+
+    this.revealed = false;
+
+    this.emitUsers();
+    this.io.to(this.roomId).emit('reset_selection');
+}
+
+/* Handle revealing everyone's votes */
+PokerRoom.prototype.handleReveal = function (id) {
+    if (id != this.host) {
+        return;
+    }
+
+    this.revealed = true;
+    this.emitUsers();
+}
+
+/* Handle a new user joining */
+PokerRoom.prototype.onConnection = function (socket) {
     console.log('someone connected - ' + socket.id);
-    users.push({id:socket.id, val:null});
-    if (host === null) {
-      host = socket.id;
+    this.users.push({id:socket.id, val:null});
+    if (this.host === null) {
+      this.host = socket.id;
       socket.emit('host_set')
     }
   
-    emitUsers();
+    this.emitUsers();
   
-    socket.on('selection', handleSelection);
-    socket.on('reset', handleReset);
-    socket.on('reveal', handleReveal);
+    socket.on('selection', this.handleSelection.bind(this));
+    socket.on('reset', this.handleReset.bind(this));
+    socket.on('reveal', this.handleReveal.bind(this));
   
   
     socket.on('disconnect', () => {
-      users = users.filter( (element) => {
+      this.users = this.users.filter( (element) => {
         return element.id != socket.id;
       });
   
-      if (host === socket.id) {
-        host = users[0] ? users[0].id : null;
+      if (this.host === socket.id) {
+        this.host = this.users[0] ? this.users[0].id : null;
   
-        if (host) {
-          io.to(host).emit('host_set')
+        if (this.host) {
+          this.io.to(this.host).emit('host_set')
+        }
+        else {
+            socket.emit('delete_room');
         }
       }
   
       console.log(socket.id + ' disconnected');
-      console.log(users);
-      emitUsers();
+      console.log(this.users);
+      this.emitUsers();
     });
 }
 
-module.exports.init = init;
-module.exports.onConnection = onConnection;
+module.exports = PokerRoom;

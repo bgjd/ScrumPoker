@@ -9,7 +9,8 @@ var debug = require('debug')('express-local-library-tut:server');
 var http = require('http');
 var { Server } = require('socket.io');
 const { disconnect } = require('process');
-var poker = require('../public/javascripts/poker');
+var PokerRoom = require('../public/javascripts/poker');
+const { stringify } = require('querystring');
 
 /**
  * Get port from environment and store in Express.
@@ -24,15 +25,27 @@ app.set('port', port);
 
 var server = http.createServer(app);
 const io = new Server(server);
-
-poker.init(io);
+var rooms = {};
 
 /**
  * Socket events
  */
+// TODO handle delete_room, if io.sockets.clients('room_name') length is 0 delete
 io.on('connection', (socket) => {
-  poker.onConnection(socket);
-});  
+  console.log('connected: ' + socket.id);
+  socket.on('join_room', (room_id) => {
+    var pokerRoom;
+    if (rooms[room_id]) {
+      pokerRoom = rooms[room_id];
+    }
+    else {
+      pokerRoom = new PokerRoom(io, room_id);
+      rooms[room_id] = pokerRoom;
+    }
+    socket.join(room_id);
+    pokerRoom.onConnection(socket);
+  }
+)});  
 
 /**
  * Listen on provided port, on all network interfaces.

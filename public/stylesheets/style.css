@@ -1,8 +1,20 @@
 body {
-  max-width: fit-content;
+  max-width: 75%;
+  min-width: fit-content;
   background-color: #354f52;
   margin: 0 auto;
   font: 26px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+button {
+  font: .8em "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: .2em;
+  padding: .2em;
+}
+
+input {
+  font: 1em "Lucida Grande", Helvetica, Arial, sans-serif;
+  width: 5em;
 }
 
 a {
@@ -17,20 +29,27 @@ a {
   font-size: 48px;
 }
 
-#votes {
-  padding: 1em;
+.s1 {
   background-color: #84a98c;
+  min-height: 5em;
+  padding: 1em;
+
+}
+
+#votes {
   display: flex;
   flex: auto;
+}
+
+.s2 {
+  background-color: #52796f;
+  padding: 1em;
   min-height: 5em;
 }
 
 #selection {
-  background-color: #52796f;
   display: flex;
   flex: 0;
-  padding: 1em;
-  min-height: 5em;
 }
 
 #host {

@@ -43,7 +43,6 @@ function drawVotes(users) {
 }
 
 function drawHost() {
-    console.log('You are now the host yay!');
     var hostContainer = document.querySelector('#host');
     hostContainer.innerHTML = '';
 
@@ -64,6 +63,8 @@ function drawHost() {
 }
 
 function init() {
+    var room = document.location.pathname.split('/').pop();
+    socket.emit('join_room', room);
     generateSelection();
 }
 
