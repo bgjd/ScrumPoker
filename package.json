@@ -1,11 +1,11 @@
 {
-  "name": "express-local-library-tut",
+  "name": "scrum-poker",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
-    "serverstart": "DEBUG=express-local-library-tut:* npm run devstart"
+    "serverstart": "DEBUG=scrum-poker:* npm run devstart"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
