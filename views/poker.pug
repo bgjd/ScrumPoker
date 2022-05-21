@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  div(id="votes" class="s1")
+  div(id="selection" class="s2")
+  div(id="host")
+
+block scripts
+    script(src="/socket.io/socket.io.js")
+    script(src="/javascripts/client.js" defer)

@@ -30,7 +30,6 @@ var rooms = {};
 /**
  * Socket events
  */
-// TODO handle delete_room, if io.sockets.clients('room_name') length is 0 delete
 io.on('connection', (socket) => {
   console.log('connected: ' + socket.id);
   socket.on('join_room', (room_id) => {
@@ -44,8 +43,13 @@ io.on('connection', (socket) => {
     }
     socket.join(room_id);
     pokerRoom.onConnection(socket);
-  }
-)});  
+  });
+});  
+
+io.of("/").adapter.on("delete-room", (room) => {
+  delete rooms[room];
+  console.log(`room ${room} was deleted`);
+});
 
 /**
  * Listen on provided port, on all network interfaces.

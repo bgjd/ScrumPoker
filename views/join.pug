@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  div(class="s1")
+    Join room:
+    input(type="text" name="room" id="room")
+    button(onclick="join_room()") Join
+  div(class="s2")
+block scripts
+    script(src="/javascripts/join.js")

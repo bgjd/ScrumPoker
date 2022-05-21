@@ -99,9 +99,6 @@ PokerRoom.prototype.onConnection = function (socket) {
         if (this.host) {
           this.io.to(this.host).emit('host_set')
         }
-        else {
-            socket.emit('delete_room');
-        }
       }
   
       console.log(socket.id + ' disconnected');
